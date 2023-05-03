@@ -36,20 +36,24 @@ CREATE TABLE IF NOT EXISTS public.buildinginfo
 
 CREATE TABLE IF NOT EXISTS public.contactinfo
 (
-    id integer NOT NULL DEFAULT 'nextval('contactinfo_id_seq'::regclass)',
     phonenumber character varying(20) COLLATE pg_catalog."default",
     email character varying(255) COLLATE pg_catalog."default",
     faxnumber character varying(20) COLLATE pg_catalog."default",
-    landlord_id uuid,
-    tenant_id uuid,
-    CONSTRAINT contactinfo_pkey PRIMARY KEY (id)
+    landlord_id uuid NOT NULL,
+    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+    tenant_id uuid NOT NULL,
+    CONSTRAINT contactinfo_pkey PRIMARY KEY (id),
+    CONSTRAINT contactinfo_landlord_id_key UNIQUE (landlord_id),
+    CONSTRAINT contactinfo_tenant_id_key UNIQUE (tenant_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.landlord
 (
     id uuid NOT NULL DEFAULT 'gen_random_uuid()',
     name character varying(50) COLLATE pg_catalog."default",
-    CONSTRAINT landlord_pkey1 PRIMARY KEY (id)
+    contact_info_id uuid NOT NULL,
+    CONSTRAINT landlord_pkey1 PRIMARY KEY (id),
+    CONSTRAINT landlord_contact_info_id_key UNIQUE (contact_info_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.log
@@ -79,7 +83,9 @@ CREATE TABLE IF NOT EXISTS public.tenant
     id uuid NOT NULL DEFAULT 'gen_random_uuid()',
     name character varying(50) COLLATE pg_catalog."default",
     unit_id uuid,
-    CONSTRAINT landlord_pkey PRIMARY KEY (id)
+    contact_info_id uuid NOT NULL,
+    CONSTRAINT landlord_pkey PRIMARY KEY (id),
+    CONSTRAINT tenant_contact_info_id_key UNIQUE (contact_info_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.unit
@@ -123,6 +129,8 @@ ALTER TABLE IF EXISTS public.contactinfo
     REFERENCES public.landlord (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
+CREATE INDEX IF NOT EXISTS contactinfo_landlord_id_key
+    ON public.contactinfo(landlord_id);
 
 
 ALTER TABLE IF EXISTS public.contactinfo
@@ -130,6 +138,17 @@ ALTER TABLE IF EXISTS public.contactinfo
     REFERENCES public.tenant (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
+CREATE INDEX IF NOT EXISTS contactinfo_tenant_id_key
+    ON public.contactinfo(tenant_id);
+
+
+ALTER TABLE IF EXISTS public.landlord
+    ADD CONSTRAINT landlord_contact_info_id_fkey FOREIGN KEY (contact_info_id)
+    REFERENCES public.contactinfo (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+CREATE INDEX IF NOT EXISTS landlord_contact_info_id_key
+    ON public.landlord(contact_info_id);
 
 
 ALTER TABLE IF EXISTS public.log
@@ -151,6 +170,15 @@ ALTER TABLE IF EXISTS public.request
     REFERENCES public.unit (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.tenant
+    ADD CONSTRAINT tenant_contact_info_id_fkey FOREIGN KEY (contact_info_id)
+    REFERENCES public.contactinfo (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION;
+CREATE INDEX IF NOT EXISTS tenant_contact_info_id_key
+    ON public.tenant(contact_info_id);
 
 
 ALTER TABLE IF EXISTS public.tenant
