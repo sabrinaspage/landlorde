@@ -1,0 +1,189 @@
+2023-05-09 18:00:45.729 EDT [51633] LOG:  starting PostgreSQL 14.7 (Homebrew) on aarch64-apple-darwin21.6.0, compiled by Apple clang version 14.0.0 (clang-1400.0.29.202), 64-bit
+2023-05-09 18:00:45.732 EDT [51633] LOG:  listening on IPv6 address "::1", port 5432
+2023-05-09 18:00:45.733 EDT [51633] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2023-05-09 18:00:45.733 EDT [51633] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2023-05-09 18:00:45.735 EDT [51634] LOG:  database system was shut down at 2023-05-09 18:00:38 EDT
+2023-05-09 18:00:45.738 EDT [51633] LOG:  database system is ready to accept connections
+2023-05-09 18:17:21.007 EDT [52576] ERROR:  invalid input syntax for type uuid: "gen_random_uuid()" at character 74
+2023-05-09 18:17:21.007 EDT [52576] STATEMENT:  CREATE TABLE IF NOT EXISTS public.address
+	(
+	    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+	    streetaddress1 character varying(95) COLLATE pg_catalog."default",
+	    streetaddress2 character varying(95) COLLATE pg_catalog."default" DEFAULT 'NULL::character varying',
+	    zip character varying(6) COLLATE pg_catalog."default",
+	    city character varying(200) COLLATE pg_catalog."default",
+	    county character varying(50) COLLATE pg_catalog."default" DEFAULT 'NULL::character varying',
+	    country character varying(50) COLLATE pg_catalog."default",
+	    state character varying(50) COLLATE pg_catalog."default",
+	    tenant_id uuid,
+	    landlord_id uuid,
+	    CONSTRAINT address_pkey PRIMARY KEY (id)
+	);
+2023-05-09 18:17:21.008 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.008 EDT [52576] STATEMENT:  CREATE TABLE IF NOT EXISTS public.building
+	(
+	    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+	    address address,
+	    landlord_id uuid,
+	    CONSTRAINT building_pkey PRIMARY KEY (id)
+	);
+2023-05-09 18:17:21.008 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.008 EDT [52576] STATEMENT:  CREATE TABLE IF NOT EXISTS public.buildinginfo
+	(
+	    floors smallint,
+	    adaaccess adaaccess,
+	    datebuilt date,
+	    building_id uuid
+	);
+2023-05-09 18:17:21.008 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.008 EDT [52576] STATEMENT:  CREATE TABLE IF NOT EXISTS public.contactinfo
+	(
+	    phonenumber character varying(20) COLLATE pg_catalog."default",
+	    email character varying(255) COLLATE pg_catalog."default",
+	    faxnumber character varying(20) COLLATE pg_catalog."default",
+	    landlord_id uuid NOT NULL,
+	    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+	    tenant_id uuid NOT NULL,
+	    CONSTRAINT contactinfo_pkey PRIMARY KEY (id),
+	    CONSTRAINT contactinfo_landlord_id_key UNIQUE (landlord_id),
+	    CONSTRAINT contactinfo_tenant_id_key UNIQUE (tenant_id)
+	);
+2023-05-09 18:17:21.008 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.008 EDT [52576] STATEMENT:  CREATE TABLE IF NOT EXISTS public.landlord
+	(
+	    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+	    name character varying(50) COLLATE pg_catalog."default",
+	    contact_info_id uuid NOT NULL,
+	    CONSTRAINT landlord_pkey1 PRIMARY KEY (id),
+	    CONSTRAINT landlord_contact_info_id_key UNIQUE (contact_info_id)
+	);
+2023-05-09 18:17:21.008 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.008 EDT [52576] STATEMENT:  CREATE TABLE IF NOT EXISTS public.log
+	(
+	    status requeststatus NOT NULL,
+	    date date,
+	    description text COLLATE pg_catalog."default",
+	    request_id uuid
+	);
+2023-05-09 18:17:21.008 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.008 EDT [52576] STATEMENT:  CREATE TABLE IF NOT EXISTS public.request
+	(
+	    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+	    buildingunit character varying(5) COLLATE pg_catalog."default",
+	    buildingaddress address,
+	    urgency requesturgency,
+	    closed boolean NOT NULL,
+	    status requeststatus,
+	    createdat date,
+	    tenant_id uuid,
+	    unit_id uuid,
+	    CONSTRAINT request_pkey PRIMARY KEY (id)
+	);
+2023-05-09 18:17:21.008 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.008 EDT [52576] STATEMENT:  CREATE TABLE IF NOT EXISTS public.tenant
+	(
+	    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+	    name character varying(50) COLLATE pg_catalog."default",
+	    unit_id uuid,
+	    contact_info_id uuid NOT NULL,
+	    CONSTRAINT landlord_pkey PRIMARY KEY (id),
+	    CONSTRAINT tenant_contact_info_id_key UNIQUE (contact_info_id)
+	);
+2023-05-09 18:17:21.008 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.008 EDT [52576] STATEMENT:  CREATE TABLE IF NOT EXISTS public.unit
+	(
+	    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+	    unitnumber character varying(5) COLLATE pg_catalog."default",
+	    building_id uuid,
+	    CONSTRAINT unit_pkey PRIMARY KEY (id)
+	);
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.address
+	    ADD CONSTRAINT address_landlord_id_fkey FOREIGN KEY (landlord_id)
+	    REFERENCES public.landlord (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.address
+	    ADD CONSTRAINT address_tenant_id_fkey FOREIGN KEY (tenant_id)
+	    REFERENCES public.tenant (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.building
+	    ADD CONSTRAINT building_landlord_id_fkey FOREIGN KEY (landlord_id)
+	    REFERENCES public.landlord (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.buildinginfo
+	    ADD CONSTRAINT buildinginfo_building_id_fkey FOREIGN KEY (building_id)
+	    REFERENCES public.building (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.contactinfo
+	    ADD CONSTRAINT contactinfo_landlord_id_fkey FOREIGN KEY (landlord_id)
+	    REFERENCES public.landlord (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  CREATE INDEX IF NOT EXISTS contactinfo_landlord_id_key
+	    ON public.contactinfo(landlord_id);
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.contactinfo
+	    ADD CONSTRAINT contactinfo_tenant_id_fkey FOREIGN KEY (tenant_id)
+	    REFERENCES public.tenant (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  CREATE INDEX IF NOT EXISTS contactinfo_tenant_id_key
+	    ON public.contactinfo(tenant_id);
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.landlord
+	    ADD CONSTRAINT landlord_contact_info_id_fkey FOREIGN KEY (contact_info_id)
+	    REFERENCES public.contactinfo (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  CREATE INDEX IF NOT EXISTS landlord_contact_info_id_key
+	    ON public.landlord(contact_info_id);
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.log
+	    ADD CONSTRAINT log_request_id_fkey FOREIGN KEY (request_id)
+	    REFERENCES public.request (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.request
+	    ADD CONSTRAINT request_tenant_id_fkey FOREIGN KEY (tenant_id)
+	    REFERENCES public.tenant (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.request
+	    ADD CONSTRAINT request_unit_id_fkey FOREIGN KEY (unit_id)
+	    REFERENCES public.unit (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.tenant
+	    ADD CONSTRAINT tenant_contact_info_id_fkey FOREIGN KEY (contact_info_id)
+	    REFERENCES public.contactinfo (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  CREATE INDEX IF NOT EXISTS tenant_contact_info_id_key
+	    ON public.tenant(contact_info_id);
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.tenant
+	    ADD CONSTRAINT tenant_unit_id_fkey FOREIGN KEY (unit_id)
+	    REFERENCES public.unit (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
+2023-05-09 18:17:21.009 EDT [52576] ERROR:  current transaction is aborted, commands ignored until end of transaction block
+2023-05-09 18:17:21.009 EDT [52576] STATEMENT:  ALTER TABLE IF EXISTS public.unit
+	    ADD CONSTRAINT unit_building_id_fkey FOREIGN KEY (building_id)
+	    REFERENCES public.building (id) MATCH SIMPLE
+	    ON UPDATE NO ACTION
+	    ON DELETE NO ACTION;
