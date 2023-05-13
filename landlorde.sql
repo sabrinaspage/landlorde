@@ -3,9 +3,17 @@
 BEGIN;
 
 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TYPE adaaccess AS ENUM ('accessible', 'inaccessible', 'partiallyAccessible');
+
+CREATE TYPE requeststatus AS ENUM ('new', 'overdue', 'viewed', 'wontDo', 'solved', 'pending', 'postponed');
+
+CREATE TYPE requesturgency AS ENUM ('emergency', 'urgent', 'routine');
+
 CREATE TABLE IF NOT EXISTS public.address
 (
-    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
     streetaddress1 character varying(95) COLLATE pg_catalog."default",
     streetaddress2 character varying(95) COLLATE pg_catalog."default" DEFAULT 'NULL::character varying',
     zip character varying(6) COLLATE pg_catalog."default",
@@ -20,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public.address
 
 CREATE TABLE IF NOT EXISTS public.building
 (
-    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
     address address,
     landlord_id uuid,
     CONSTRAINT building_pkey PRIMARY KEY (id)
@@ -40,7 +48,7 @@ CREATE TABLE IF NOT EXISTS public.contactinfo
     email character varying(255) COLLATE pg_catalog."default",
     faxnumber character varying(20) COLLATE pg_catalog."default",
     landlord_id uuid NOT NULL,
-    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
     tenant_id uuid NOT NULL,
     CONSTRAINT contactinfo_pkey PRIMARY KEY (id),
     CONSTRAINT contactinfo_landlord_id_key UNIQUE (landlord_id),
@@ -49,7 +57,7 @@ CREATE TABLE IF NOT EXISTS public.contactinfo
 
 CREATE TABLE IF NOT EXISTS public.landlord
 (
-    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
     name character varying(50) COLLATE pg_catalog."default",
     contact_info_id uuid NOT NULL,
     CONSTRAINT landlord_pkey1 PRIMARY KEY (id),
@@ -66,7 +74,7 @@ CREATE TABLE IF NOT EXISTS public.log
 
 CREATE TABLE IF NOT EXISTS public.request
 (
-    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
     buildingunit character varying(5) COLLATE pg_catalog."default",
     buildingaddress address,
     urgency requesturgency,
@@ -80,7 +88,7 @@ CREATE TABLE IF NOT EXISTS public.request
 
 CREATE TABLE IF NOT EXISTS public.tenant
 (
-    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
     name character varying(50) COLLATE pg_catalog."default",
     unit_id uuid,
     contact_info_id uuid NOT NULL,
@@ -90,7 +98,7 @@ CREATE TABLE IF NOT EXISTS public.tenant
 
 CREATE TABLE IF NOT EXISTS public.unit
 (
-    id uuid NOT NULL DEFAULT 'gen_random_uuid()',
+    id uuid NOT NULL DEFAULT gen_random_uuid(),
     unitnumber character varying(5) COLLATE pg_catalog."default",
     building_id uuid,
     CONSTRAINT unit_pkey PRIMARY KEY (id)
