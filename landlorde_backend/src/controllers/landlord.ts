@@ -1,6 +1,5 @@
 import { Pool } from "pg";
 import pool from "../pool";
-import { NextApiRequest, NextApiResponse } from "next";
 
 class LandlordController {
   pool: Pool;
@@ -36,10 +35,20 @@ class LandlordController {
     const client = await this.pool.connect();
 
     try {
-      const { name, address, phone } = landlordData;
+      const { phone_number, email, fax_number, landlord_name } = landlordData;
       const result = await client.query(
-        "INSERT INTO landlords (name, address, phone) VALUES ($1, $2, $3) RETURNING *",
-        [name, address, phone]
+        `
+        WITH inserted_contactinfo AS (
+          INSERT INTO contactinfo (phonenumber, email, faxnumber) 
+          VALUES ($1, $2, $3)
+          RETURNING id
+        )
+        INSERT INTO landlord (name, contact_info_id)
+        SELECT $4, id
+        FROM inserted_contactinfo
+        RETURNING *;
+        `,
+        [phone_number, email, fax_number, landlord_name]
       );
       return result.rows[0];
     } finally {
@@ -51,13 +60,15 @@ class LandlordController {
     const client = await pool.connect();
     try {
       const result = await client.query(
-        `UPDATE landlord SET
-            name = COALESCE($2, name)
-            WHERE id = $1
-          RETURNING *;`,
+        `
+        UPDATE landlord SET
+          name = COALESCE($2, name)
+          WHERE id = $1
+        RETURNING *;
+        `,
         [landlordId, landlordName]
       );
-      return result.rows;
+      return result.rows[0];
     } finally {
       client.release();
     }

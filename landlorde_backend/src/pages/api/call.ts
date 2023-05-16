@@ -5,8 +5,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<{ message: any }>
 ) {
-  const result = await landlord.deleteLandlord(
-    "400394c0-2584-47cd-8962-cb0ae71451d8"
-  );
+  const result = await landlord.createLandlord({
+    phone_number: "123-456-7890",
+    email: "sab@gmail.com",
+    fax_number: "123-456-7890",
+    landlord_name: "my name",
+  });
   res.status(200).json({ message: result });
 }
