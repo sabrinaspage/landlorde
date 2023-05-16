@@ -1,19 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import pool from "../pool";
+import landlord from "@/controllers/landlord";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<{ message: string }>
+  res: NextApiResponse<{ message: any }>
 ) {
-  const client = await pool.connect();
-  console.log(client);
-  try {
-    const result = await client.query("SELECT * FROM landlord");
-    // res.status(200).json({ result });
-
-    console.log(result.rows);
-    console.log("hello");
-  } finally {
-    client.release();
-  }
+  const result = await landlord.deleteLandlord(
+    "400394c0-2584-47cd-8962-cb0ae71451d8"
+  );
+  res.status(200).json({ message: result });
 }
