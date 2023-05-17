@@ -24,7 +24,7 @@ class AddressController {
       const result = await client.query("SELECT * FROM address WHERE id = $1", [
         addressId,
       ]);
-      return result.rows;
+      return result.rows[0];
     } finally {
       client.release();
     }

@@ -25,7 +25,7 @@ class LandlordController {
         "SELECT * FROM landlord WHERE id = $1",
         [landlordId]
       );
-      return result.rows;
+      return result.rows[0];
     } finally {
       client.release();
     }
