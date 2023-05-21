@@ -6,30 +6,35 @@ export default async function landlordHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { query } = req;
-  const { id } = query;
+  if (req.method === "GET") {
+    const { query } = req;
+    const { id } = query;
 
-  if (id instanceof Array) {
-    res.status(400).json({ message: `Only one id allowed.` });
+    if (!id) return;
+
+    if (id instanceof Array) {
+      res.status(400).json({ message: `Only one id allowed.` });
+      return;
+    }
+
+    const result = await landlord.getLandlordById(id);
+
+    if (result instanceof DatabaseError) {
+      res.status(200).json({ message: result.message });
+      return;
+    }
+
+    if (result.rowCount === 0) {
+      res
+        .status(400)
+        .json({ message: `Landlord with id: ${id} does not exist.` });
+      return;
+    }
+
+    res.status(200).json({ message: result.rows[0] });
     return;
   }
 
-  if (!id) {
-    res.status(400).json({ message: `id must be defined.` });
-    return;
-  }
-
-  const result = await landlord.getLandlordById(id);
-
-  if (result instanceof DatabaseError) {
-    res.status(200).json({ message: result.message });
-    return;
-  }
-
-  if (result.rowCount === 0) {
-    res
-      .status(400)
-      .json({ message: `Landlord with id: ${id} does not exist.` });
   if (req.method === "DELETE") {
     const { query } = req;
     const { id } = query;
@@ -58,7 +63,4 @@ export default async function landlordHandler(
     res.status(200).json({ message: `Successfully deleted ${id}.` });
     return;
   }
-
-  res.status(200).json({ message: result.rows[0] });
-  return;
 }
