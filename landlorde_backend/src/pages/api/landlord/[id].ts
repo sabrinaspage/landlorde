@@ -16,7 +16,7 @@ export default async function landlordHandler(
     return;
   }
 
-  if (req.method === "GET") {
+  if (req.method === HttpMethods.GET) {
     const result = await landlord.getLandlordById(id);
 
     if (result instanceof DatabaseError) {
@@ -35,7 +35,7 @@ export default async function landlordHandler(
     return;
   }
 
-  if (req.method === "DELETE") {
+  if (req.method === HttpMethods.DELETE) {
     const result = await landlord.deleteLandlord(id);
 
     if (result instanceof DatabaseError) {
@@ -54,7 +54,7 @@ export default async function landlordHandler(
     return;
   }
 
-  if (req.method === "UPDATE") {
+  if (req.method === HttpMethods.UPDATE) {
     const { body } = req;
 
     const result = await landlord.updateLandlordById(id, body);

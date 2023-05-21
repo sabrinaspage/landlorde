@@ -16,7 +16,7 @@ export default async function landlordHandler(
     return;
   }
 
-  if (req.method === "UPDATE") {
+  if (req.method === HttpMethods.UPDATE) {
     const { body } = req;
 
     const result = await landlord.updateLandlordContactInfoById(id, body);

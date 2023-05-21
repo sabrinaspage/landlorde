@@ -19,3 +19,11 @@ enum RequestUrgency {
   URGENT = "urgent",
   ROUTINE = "routine",
 }
+
+enum HttpMethods {
+  UPDATE = "UPDATE",
+  GET = "GET",
+  PUT = "PUT",
+  POST = "POST",
+  DELETE = "POST",
+}

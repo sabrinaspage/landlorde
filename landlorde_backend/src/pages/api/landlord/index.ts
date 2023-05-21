@@ -6,7 +6,7 @@ export default async function landlordsHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "GET") {
+  if (req.method === HttpMethods.GET) {
     const result = await landlord.getAllLandlords();
 
     if (result instanceof DatabaseError) {
@@ -18,7 +18,7 @@ export default async function landlordsHandler(
     return;
   }
 
-  if (req.method === "POST") {
+  if (req.method === HttpMethods.POST) {
     const { body } = req;
 
     const result = await landlord.createLandlord(body);
