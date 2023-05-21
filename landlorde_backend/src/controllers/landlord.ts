@@ -37,6 +37,24 @@ class LandlordController extends ControllerApi {
       RETURNING *;
       `,
       [landlordId, landlordName]
+  async updateLandlordContactInfoById(
+    landlordId: string,
+    landlordContactInfoData: any
+  ) {
+    const { phone_number, email, fax_number } = landlordContactInfoData;
+
+    return this.runQuery(
+      `
+      UPDATE contactinfo SET
+        phonenumber = COALESCE($2, phonenumber),
+        email = COALESCE($3, email),
+        faxnumber = COALESCE($4, faxnumber),
+      FROM landlord
+      WHERE landlord.contact_info_id = contactinfo.id
+      AND
+      landlord.id = $1;
+      `,
+      [landlordId, phone_number, email, fax_number]
     );
   }
 
