@@ -14,16 +14,16 @@ class LandlordController extends ControllerApi {
 
     return this.runQuery(
       `
-      WITH inserted_contactinfo AS (
-        INSERT INTO contactinfo (phonenumber, email, faxnumber) 
-        VALUES ($1, $2, $3)
-        RETURNING id
-      )
-      INSERT INTO landlord (name, contact_info_id)
-      SELECT $4, id
-      FROM inserted_contactinfo
-      RETURNING *;
-    `,
+        WITH inserted_contactinfo AS (
+          INSERT INTO contactinfo (phonenumber, email, faxnumber) 
+          VALUES ($1, $2, $3)
+          RETURNING id
+        )
+        INSERT INTO landlord (name, contact_info_id)
+        SELECT $4, id
+        FROM inserted_contactinfo
+        RETURNING *;
+      `,
       [phone_number, email, fax_number, landlord_name]
     );
   }
@@ -31,11 +31,11 @@ class LandlordController extends ControllerApi {
   async updateLandlordById(landlordName: string | null, landlordId: string) {
     return this.runQuery(
       `
-    UPDATE landlord SET
-      name = COALESCE($2, name)
-      WHERE id = $1
-    RETURNING *;
-    `,
+      UPDATE landlord SET
+        name = COALESCE($2, name)
+        WHERE id = $1
+      RETURNING *;
+      `,
       [landlordId, landlordName]
     );
   }
