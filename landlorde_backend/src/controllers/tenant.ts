@@ -1,4 +1,4 @@
-import ControllerApi from "./controllerApi";
+import ControllerApi from "./controller_api";
 
 class TenantController extends ControllerApi {
   async getAllTenants() {
