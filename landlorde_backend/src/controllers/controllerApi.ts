@@ -1,4 +1,4 @@
-import { Pool } from "pg";
+import { DatabaseError, Pool } from "pg";
 import pool from "../pool";
 
 class ControllerApi {
@@ -14,7 +14,10 @@ class ControllerApi {
       const result = await client.query(query, params);
       return result.rows;
     } catch (e) {
-      console.error(e);
+      if (e instanceof DatabaseError) {
+        return e.detail;
+      }
+      throw e;
     } finally {
       client.release();
     }
