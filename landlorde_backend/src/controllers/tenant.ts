@@ -1,42 +1,19 @@
-import { Pool } from "pg";
-import pool from "../pool";
+import ControllerApi from "./controllerApi";
 
-class TenantController {
-  pool: Pool;
-
-  constructor() {
-    this.pool = pool;
-  }
-
+class TenantController extends ControllerApi {
   async getAllTenants() {
-    const client = await pool.connect();
-    try {
-      const result = await client.query("SELECT * FROM tenant");
-      return result.rows;
-    } finally {
-      client.release();
-    }
+    return this.runQuery("SELECT * FROM tenant");
   }
 
   async getTenantById(tenantId: string) {
-    const client = await pool.connect();
-    try {
-      const result = await client.query("SELECT * FROM tenant WHERE id = $1", [
-        tenantId,
-      ]);
-      return result.rows;
-    } finally {
-      client.release();
-    }
+    return this.runQuery("SELECT * FROM tenant WHERE id = $1", [tenantId]);
   }
 
   async createTenant(tenantData: any) {
-    const client = await this.pool.connect();
+    const { phone_number, email, fax_number, tenant_name } = tenantData;
 
-    try {
-      const { phone_number, email, fax_number, tenant_name } = tenantData;
-      const result = await client.query(
-        `
+    return this.runQuery(
+      `
         WITH inserted_contactinfo AS (
           INSERT INTO contactinfo (phonenumber, email, faxnumber) 
           VALUES ($1, $2, $3)
@@ -46,44 +23,25 @@ class TenantController {
         SELECT $4, id
         FROM inserted_contactinfo
         RETURNING *;
-        `,
-        [phone_number, email, fax_number, tenant_name]
-      );
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+      `,
+      [phone_number, email, fax_number, tenant_name]
+    );
   }
 
-  async updateTenantById(tenantName: string | null, tenantId: string) {
-    const client = await pool.connect();
-    try {
-      const result = await client.query(
-        `
+  async updateTenantById(tenantId: string, tenantName: string | null = null) {
+    return this.runQuery(
+      `
         UPDATE tenant SET
           name = COALESCE($2, name)
           WHERE id = $1
         RETURNING *;
-        `,
-        [tenantId, tenantName]
-      );
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+      `,
+      [tenantId, tenantName]
+    );
   }
 
   async deleteTenant(tenantId: string) {
-    const client = await this.pool.connect();
-
-    try {
-      const result = await client.query("DELETE FROM tenant WHERE id = $1", [
-        tenantId,
-      ]);
-      return result.rowCount;
-    } finally {
-      client.release();
-    }
+    return this.runQuery("DELETE FROM tenant WHERE id = $1", [tenantId]);
   }
 }
 
