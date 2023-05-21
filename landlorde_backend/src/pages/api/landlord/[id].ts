@@ -26,7 +26,7 @@ export default async function landlordHandler(
 
     if (result.rowCount === 0) {
       res
-        .status(400)
+        .status(200)
         .json({ message: `Landlord with id: ${id} does not exist.` });
       return;
     }
@@ -55,7 +55,7 @@ export default async function landlordHandler(
 
     if (result.rowCount === 0) {
       res
-        .status(400)
+        .status(200)
         .json({ message: `Landlord with id: ${id} does not exist.` });
       return;
     }
