@@ -28,7 +28,9 @@ class LandlordController extends ControllerApi {
     );
   }
 
-  async updateLandlordById(landlordName: string | null, landlordId: string) {
+  async updateLandlordById(landlordId: string, landlordData: any) {
+    const { name } = landlordData;
+
     return this.runQuery(
       `
       UPDATE landlord SET
@@ -36,7 +38,10 @@ class LandlordController extends ControllerApi {
         WHERE id = $1
       RETURNING *;
       `,
-      [landlordId, landlordName]
+      [landlordId, name]
+    );
+  }
+
   async updateLandlordContactInfoById(
     landlordId: string,
     landlordContactInfoData: any
