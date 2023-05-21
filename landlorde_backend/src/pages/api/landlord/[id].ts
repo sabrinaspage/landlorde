@@ -1,5 +1,6 @@
 import landlord from "@/controllers/landlord";
 import { NextApiRequest, NextApiResponse } from "next";
+import { DatabaseError } from "pg";
 
 export default async function landlordHandler(
   req: NextApiRequest,
@@ -20,10 +21,18 @@ export default async function landlordHandler(
 
   const result = await landlord.getLandlordById(id);
 
-  if (!result) {
-    res.status(400).json({ message: `Landlord with id: ${id} not found.` });
+  if (result instanceof DatabaseError) {
+    res.status(200).json({ message: result.message });
     return;
   }
 
-  res.status(200).json({ message: result });
+  if (result.rowCount === 0) {
+    res
+      .status(400)
+      .json({ message: `Landlord with id: ${id} does not exist.` });
+    return;
+  }
+
+  res.status(200).json({ message: result.rows[0] });
+  return;
 }

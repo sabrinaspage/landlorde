@@ -1,4 +1,4 @@
-import { DatabaseError, Pool } from "pg";
+import { DatabaseError, Pool, QueryResult } from "pg";
 import pool from "../pool";
 
 class ControllerApi {
@@ -8,14 +8,17 @@ class ControllerApi {
     this.pool = pool;
   }
 
-  async runQuery(query: string, params: any[] | undefined = undefined) {
+  async runQuery(
+    query: string,
+    params: any[] | undefined = undefined
+  ): Promise<QueryResult | DatabaseError> {
     const client = await this.pool.connect();
     try {
       const result = await client.query(query, params);
-      return result.rows;
+      return result;
     } catch (e) {
       if (e instanceof DatabaseError) {
-        return e.detail;
+        return e;
       }
       throw e;
     } finally {
