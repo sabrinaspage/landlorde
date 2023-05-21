@@ -17,4 +17,18 @@ export default async function landlordsHandler(
     res.status(200).json({ message: result.rows });
     return;
   }
+
+  if (req.method === "POST") {
+    const { body } = req;
+
+    const result = await landlord.createLandlord(body);
+
+    if (result instanceof DatabaseError) {
+      res.status(200).json({ message: result.message });
+      return;
+    }
+
+    res.status(200).json({ message: result.rows[0] });
+    return;
+  }
 }
