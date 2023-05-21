@@ -1,7 +1,9 @@
 import { Pool } from "pg";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const pool = new Pool({
-  connectionString: "postgresql://postgres:1337@localhost:8080/landlorde",
+  connectionString: process.env.DATABASE_URL,
   ssl: false,
 });
 
