@@ -33,7 +33,7 @@ export default async function landlordHandler(
       return;
     }
 
-    res.status(200).json({ message: `Successfully deleted ${id}.` });
+    res.status(200).json({ message: result.rows[0] });
     return;
   }
 }
