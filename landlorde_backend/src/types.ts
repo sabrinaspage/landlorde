@@ -1,10 +1,10 @@
-enum AdaAccess {
+export enum AdaAccess {
   ACCESSIBLE = "accessible",
   INACCESSIBLE = "inaccessible",
   PARTIALLY_ACCESSIBLE = "partiallyAccessible",
 }
 
-enum RequestStatus {
+export enum RequestStatus {
   NEW = "new",
   OVERDUE = "overdue",
   VIEWED = "viewed",
@@ -14,13 +14,13 @@ enum RequestStatus {
   POSTPONED = "postponed",
 }
 
-enum RequestUrgency {
+export enum RequestUrgency {
   EMERGENCY = "emergency",
   URGENT = "urgent",
   ROUTINE = "routine",
 }
 
-enum HttpMethods {
+export enum HttpMethods {
   UPDATE = "UPDATE",
   GET = "GET",
   PUT = "PUT",

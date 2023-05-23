@@ -1,4 +1,5 @@
 import landlord from "@/controllers/landlord";
+import { HttpMethods } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
 import { DatabaseError } from "pg";
 
@@ -9,10 +10,17 @@ export default async function landlordHandler(
   const { query } = req;
   const { id } = query;
 
-  if (!id) return;
+  if (!id || id instanceof Array) {
+    res.status(400).json({ message: `One single id is required.` });
+    return;
+  }
 
-  if (id instanceof Array) {
-    res.status(400).json({ message: `Only one id allowed.` });
+  const exists = await landlord.exists(id);
+
+  if (!exists) {
+    res
+      .status(400)
+      .json({ message: `Landlord with id: ${id} does not exist.` });
     return;
   }
 
@@ -21,13 +29,6 @@ export default async function landlordHandler(
 
     if (result instanceof DatabaseError) {
       res.status(200).json({ message: result.message });
-      return;
-    }
-
-    if (result.rowCount === 0) {
-      res
-        .status(200)
-        .json({ message: `Landlord with id: ${id} does not exist.` });
       return;
     }
 
@@ -43,13 +44,6 @@ export default async function landlordHandler(
       return;
     }
 
-    if (result.rowCount === 0) {
-      res
-        .status(200)
-        .json({ message: `Landlord with id: ${id} does not exist.` });
-      return;
-    }
-
     res.status(200).json({ message: `Successfully deleted ${id}.` });
     return;
   }
@@ -61,13 +55,6 @@ export default async function landlordHandler(
 
     if (result instanceof DatabaseError) {
       res.status(200).json({ message: result.message });
-      return;
-    }
-
-    if (result.rowCount === 0) {
-      res
-        .status(200)
-        .json({ message: `Landlord with id: ${id} does not exist.` });
       return;
     }
 

@@ -1,6 +1,13 @@
 import ControllerApi from "./controller_api";
 
 class TenantController extends ControllerApi {
+  async exists(tenantId: string) {
+    return this.runQuery(
+      "SELECT EXISTS ( SELECT * FROM tenant WHERE id = $1)",
+      [tenantId]
+    );
+  }
+
   async getAllTenants() {
     return this.runQuery("SELECT * FROM tenant");
   }
