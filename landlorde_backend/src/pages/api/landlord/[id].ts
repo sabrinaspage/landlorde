@@ -17,7 +17,12 @@ export default async function landlordHandler(
 
   const exists = await landlord.exists(id);
 
-  if (!exists) {
+  if (exists instanceof DatabaseError) {
+    res.status(200).json({ message: exists.message });
+    return;
+  }
+
+  if (!exists.rows[0].exists) {
     res
       .status(400)
       .json({ message: `Landlord with id: ${id} does not exist.` });
