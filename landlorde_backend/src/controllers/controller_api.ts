@@ -13,23 +13,21 @@ class ControllerApi {
     return this.runQuery(`SELECT * FROM ${this.MODEL_NAME}`);
   }
 
-  async getById(landlordId: string) {
+  async getById(id: string) {
     return this.runQuery(`SELECT * FROM ${this.MODEL_NAME} WHERE id = $1`, [
-      landlordId,
+      id,
     ]);
   }
 
-  async exists(landlordId: string) {
+  async exists(id: string) {
     return this.runQuery(
       `SELECT EXISTS ( SELECT * FROM ${this.MODEL_NAME} WHERE id = $1)`,
-      [landlordId]
+      [id]
     );
   }
 
-  async delete(landlordId: string) {
-    return this.runQuery(`DELETE FROM ${this.MODEL_NAME} WHERE id = $1`, [
-      landlordId,
-    ]);
+  async delete(id: string) {
+    return this.runQuery(`DELETE FROM ${this.MODEL_NAME} WHERE id = $1`, [id]);
   }
 
   async runQuery(
