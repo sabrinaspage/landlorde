@@ -8,7 +8,7 @@ export default async function landlordHandler(
   res: NextApiResponse
 ) {
   if (req.method === HttpMethods.GET) {
-    const result = await landlord.getAllLandlords();
+    const result = await landlord.getAll();
 
     if (result instanceof DatabaseError) {
       res.status(200).json({ message: result.message });

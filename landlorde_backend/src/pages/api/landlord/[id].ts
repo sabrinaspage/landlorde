@@ -29,7 +29,7 @@ export default async function landlordHandler(
   }
 
   if (req.method === HttpMethods.GET) {
-    const result = await landlord.getLandlordById(id);
+    const result = await landlord.getById(id);
 
     // if (result instanceof DatabaseError) {
     //   res.status(200).json({ message: result.message });
@@ -41,7 +41,7 @@ export default async function landlordHandler(
   }
 
   if (req.method === HttpMethods.DELETE) {
-    const result = await landlord.deleteLandlord(id);
+    const result = await landlord.delete(id);
 
     // if (result instanceof DatabaseError) {
     //   res.status(200).json({ message: result.message });
