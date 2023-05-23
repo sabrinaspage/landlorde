@@ -1,8 +1,9 @@
 import landlord from "@/controllers/landlord";
+import { HttpMethods } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
 import { DatabaseError } from "pg";
 
-export default async function landlordsHandler(
+export default async function landlordHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {

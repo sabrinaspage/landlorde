@@ -1,7 +1,6 @@
 import landlord from "@/controllers/landlord";
 import { HttpMethods } from "@/types";
 import { NextApiRequest, NextApiResponse } from "next";
-import { DatabaseError } from "pg";
 
 export default async function landlordHandler(
   req: NextApiRequest,
@@ -17,10 +16,10 @@ export default async function landlordHandler(
 
   const exists = await landlord.exists(id);
 
-  if (exists instanceof DatabaseError) {
-    res.status(200).json({ message: exists.message });
-    return;
-  }
+  // if (exists instanceof DatabaseError) {
+  //   res.status(200).json({ message: exists.message });
+  //   return;
+  // }
 
   if (!exists.rows[0].exists) {
     res
@@ -32,10 +31,10 @@ export default async function landlordHandler(
   if (req.method === HttpMethods.GET) {
     const result = await landlord.getLandlordById(id);
 
-    if (result instanceof DatabaseError) {
-      res.status(200).json({ message: result.message });
-      return;
-    }
+    // if (result instanceof DatabaseError) {
+    //   res.status(200).json({ message: result.message });
+    //   return;
+    // }
 
     res.status(200).json({ message: result.rows[0] });
     return;
@@ -44,10 +43,10 @@ export default async function landlordHandler(
   if (req.method === HttpMethods.DELETE) {
     const result = await landlord.deleteLandlord(id);
 
-    if (result instanceof DatabaseError) {
-      res.status(200).json({ message: result.message });
-      return;
-    }
+    // if (result instanceof DatabaseError) {
+    //   res.status(200).json({ message: result.message });
+    //   return;
+    // }
 
     res.status(200).json({ message: `Successfully deleted ${id}.` });
     return;
@@ -58,10 +57,10 @@ export default async function landlordHandler(
 
     const result = await landlord.updateLandlordById(id, body);
 
-    if (result instanceof DatabaseError) {
-      res.status(200).json({ message: result.message });
-      return;
-    }
+    // if (result instanceof DatabaseError) {
+    //   res.status(200).json({ message: result.message });
+    //   return;
+    // }
 
     res.status(200).json({ message: result.rows[0] });
     return;
