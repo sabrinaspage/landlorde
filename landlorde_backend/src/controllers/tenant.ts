@@ -3,21 +3,6 @@ import ControllerApi from "./controller_api";
 class TenantController extends ControllerApi {
   MODEL_NAME = "tenant";
 
-  async exists(tenantId: string) {
-    return this.runQuery(
-      "SELECT EXISTS ( SELECT * FROM tenant WHERE id = $1)",
-      [tenantId]
-    );
-  }
-
-  async getAllTenants() {
-    return this.runQuery("SELECT * FROM tenant");
-  }
-
-  async getTenantById(tenantId: string) {
-    return this.runQuery("SELECT * FROM tenant WHERE id = $1", [tenantId]);
-  }
-
   async createTenant(tenantData: any) {
     const { phone_number, email, fax_number, tenant_name } = tenantData;
 
@@ -47,10 +32,6 @@ class TenantController extends ControllerApi {
       `,
       [tenantId, tenantName]
     );
-  }
-
-  async deleteTenant(tenantId: string) {
-    return this.runQuery("DELETE FROM tenant WHERE id = $1", [tenantId]);
   }
 }
 

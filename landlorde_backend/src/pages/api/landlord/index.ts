@@ -10,10 +10,10 @@ export default async function landlordHandler(
   if (req.method === HttpMethods.GET) {
     const result = await landlord.getAll();
 
-    if (result instanceof DatabaseError) {
-      res.status(200).json({ message: result.message });
-      return;
-    }
+    // if (result instanceof DatabaseError) {
+    //   res.status(200).json({ message: result.message });
+    //   return;
+    // }
 
     res.status(200).json({ message: result.rows });
     return;
@@ -24,10 +24,10 @@ export default async function landlordHandler(
 
     const result = await landlord.createLandlord(body);
 
-    if (result instanceof DatabaseError) {
-      res.status(200).json({ message: result.message });
-      return;
-    }
+    // if (result instanceof DatabaseError) {
+    //   res.status(200).json({ message: result.message });
+    //   return;
+    // }
 
     res.status(200).json({ message: result.rows[0] });
     return;

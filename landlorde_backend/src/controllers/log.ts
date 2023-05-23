@@ -1,12 +1,7 @@
-import { Pool } from "pg";
-import pool from "../pool";
+import ControllerApi from "./controller_api";
 
-class LogController {
-  pool: Pool;
-
-  constructor() {
-    this.pool = pool;
-  }
+class LogController extends ControllerApi {
+  MODEL_NAME = "log";
 }
 
 export default LogController;

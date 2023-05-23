@@ -1,12 +1,7 @@
-import { Pool } from "pg";
-import pool from "../pool";
+import ControllerApi from "./controller_api";
 
-class BuildingController {
-  pool: Pool;
-
-  constructor() {
-    this.pool = pool;
-  }
+class BuildingController extends ControllerApi {
+  MODEL_NAME = "building";
 }
 
-export default BuildingController;
+export default new BuildingController();
